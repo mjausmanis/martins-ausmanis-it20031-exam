@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { auth } from '../stores/auth.js'
 
 // Importējam vēlamos skatus kurus gribam izmantot
 import Login from '@/views/Login.vue'
