@@ -68,7 +68,7 @@ export default {
     computed: {
         songs: {
             get(){
-                if (this.changedSongs.length > 0) {
+                if (this.changedSongs.length > 0 || this.show_favorites) { //show_favorites šeit ir, lai parādītu tukšu ekrānu, ja nav favorite dziesmu
                     return this.findFromKeyword(this.changedSongs);
                 } else {
                     return this.findFromKeyword(songData)
