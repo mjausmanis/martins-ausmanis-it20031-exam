@@ -6,7 +6,7 @@
                 <div>KRAKEN.FM</div>
             </div>
             <input id="input-email" placeholder="E-mail" v-model="email" />
-            <input id="input-password" placeholder="Password" v-model="password" />
+            <input id="input-password" type="password" placeholder="Password" v-model="password" />
             <button :disabled="isDisabled" id="btn-submit" v-on:click="logIn()">LOGIN</button>
         </form>
     </div>
@@ -32,7 +32,6 @@ export default {
     },
     methods: {
         logIn() {
-            console.log('attempt login')
             auth.authenticate(this.email, this.password);
         }
     }

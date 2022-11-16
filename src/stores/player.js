@@ -5,6 +5,7 @@ export const player = reactive({
     now_playing: {}, // SONG OBJECT
     setPlaylist(songs) {
         this.playlist = songs;
+        this.now_playing = songs[0]
     },
     setNowPlaying(song) {
         this.now_playing = song;
@@ -31,17 +32,13 @@ export const player = reactive({
         return this.now_playing?.preview_url;
     },
     getNextSong(){
-        if (this.playlist.includes(this.now_playing)) {
-            pos = this.songs.indexOf(this.now_playing);
-            return this.playlist[pos+1];
-        } else {
-            return this.playlist[0];
-        }
+        let pos = this.playlist.indexOf(this.now_playing);
+        return this.playlist[pos+1]
     },
     getPreviousSong() {
-        if (this.playlist.includes(this.now_playing)) {
-            if (this.songs.indexOf(this.now_playing) != 0){ 
-                pos = this.songs.indexOf(this.now_playing);
+        if (this.playlist.indexOf(this.now_playing) >= 0) {
+            if (this.playlist.indexOf(this.now_playing) != 0){ 
+                let pos = this.playlist.indexOf(this.now_playing);
                 return this.playlist[pos-1];
             }
         } else {

@@ -1,18 +1,21 @@
 import {reactive} from 'vue'
 import router from '../router';
+import songs from '../data/songs.js'
 
 export const auth = reactive ({
-name : 'Mārtiņš',
-surname : 'Ausmanis',
-code : 'IT20031',
-favorite_songs: localStorage.favorite_songs ?? '',
+    user : {
+        name : 'Mārtiņš',
+        surname : 'Ausmanis',
+        code : 'IT20031',
+        favorite_songs: localStorage.favorite_songs ?? '',
+    },
 
 is_authenticated: localStorage.is_authenticated ?? false,
 
 setUserData(name, surname, code) {
-    this.name = name;
-    this.surname = surname;
-    this.code = code;
+    this.user.name = name;
+    this.user.surname = surname;
+    this.user.code = code;
 },
 
 authenticate(email, password) {
@@ -31,22 +34,29 @@ logout() {
 },
 
 toggleFavorite(songID) {
-    if (this.favorite_songs.includes(songID)) {
-        let splitList = this.favorite_songs.split("; ");
+    if (this.user.favorite_songs.includes(songID)) {
+        let splitList = this.user.favorite_songs.split("; ");
         let pos = splitList.indexOf(songID);
         splitList.splice(pos, 1);
-        this.favorite_songs = splitList.join("; ")
+        this.user.favorite_songs = splitList.join("; ")
     } else {
-        this.favorite_songs += songID;
-        this.favorite_songs += "; "
+        if (this.user.favorite_songs == undefined) {
+            this.user.favorite_songs = songID;
+        }
+        this.user.favorite_songs += songID;
+        this.user.favorite_songs += "; "
     }
-
-    console.log(this.favorite_songs)
-    localStorage.favorite_songs = this.favorite_songs;
+    
+    localStorage.favorite_songs = this.user.favorite_songs;
 },
 
 getFavoriteSongs() {
-    return this.favorite_songs;
+    let list = [];
+    for (let i = 0; i < songs.length; i++) {
+        if(localStorage.favorite_songs != undefined && localStorage.favorite_songs.includes(songs[i].id)) {
+            list.push(songs[i]);
+        }
+    }
+    return list;
 }
-
 })

@@ -3,7 +3,7 @@
     <div class="wrapper-header">
         <h1>SONGS</h1>
         <div class="wrapper-search">
-            <input v-model="keyword" id="input-search" placeholder="Search by title..." />
+            <input v-model="keyword" id="input-search" placeholder="Search by title..."/>
         </div>
         <div class="wrapper-settings">
             <button v-bind:class="[{ active: show_favorites }]" id="btn-show-favorites" v-on:click="showFavorites()">Show Favorites</button>
@@ -25,10 +25,10 @@
                 </th>
             </tr>
             <!-- Loop goes on this <tr> element -->
-            <tr class="song" v-for="(song, index) in songs" :key="index" v-on:dblclick="selectSong(song)">
+            <tr class="song" v-for="(song, index) in songs" :key="index" v-on:dblclick="selectSong(song)" :class="[{active : isPlaying(song)}]">
                 <td id="td-index">
-                    <IconPlay />
-                    <span id="txt-index" v-text="index+1"></span>
+                    <IconPlay v-show="isPlaying(song)"/>
+                    <span id="txt-index" v-text="index+1" v-if="isPlaying(song) == false"></span>
                 </td>
                 <td id="td-title">
                     <img :src="song.album.images[0].url" />
@@ -62,7 +62,18 @@ export default {
             sort_by_title: false,
             sort_by_duration: false,
             sortState: 0,
-            songs: songData
+            changedSongs: []
+        }
+    },
+    computed: {
+        songs: {
+            get(){
+                if (this.changedSongs.length > 0) {
+                    return this.findFromKeyword(this.changedSongs);
+                } else {
+                    return this.findFromKeyword(songData)
+                }
+            }
         }
     },
     components: {
@@ -79,19 +90,20 @@ export default {
         },
         showFavorites() {
             this.show_favorites = !this.show_favorites
-            let favorites = [];
-            if (this.show_favorites && localStorage.favorite_songs != undefined) {
-                for (let i = 0; i < this.songs.length; i++) {
-                    if (localStorage.favorite_songs.includes(this.songs[i].id)) {
-                        favorites.push(this.songs[i]);
-                    }
-                }
-                this.songs = favorites;
+            if (this.show_favorites ) {
+                this.changedSongs = auth.getFavoriteSongs();
             } else {
-                this.songs = songData
+                this.changedSongs = songData;
             }
         },
         sortBy(value){
+            let sorted;
+            if (this.show_favorites) {
+                sorted = auth.getFavoriteSongs().concat();
+            } else {
+                sorted = songData.concat();
+            }
+            sorted = this.findFromKeyword(sorted);
             if ( value == 1) {
                 this.sort_by_duration = false;
                 this.sort_by_title = true;
@@ -101,10 +113,10 @@ export default {
             }
 
             if (this.sortState == 0) {
-                this.songs.sort((a, b) => {
+                sorted.sort((a, b) => {
                     let fa = a.name.toLowerCase(), fb = b.name.toLowerCase(); 
                     if (value == 2) {
-                        fa = a.duration_ms, fb = b.duration_ms; 
+                        fa = a.name, fb = b.name; 
                     }
                     if (fa < fb) {
                         return -1
@@ -114,9 +126,10 @@ export default {
                     }
                     return 0
                 })
+                this.changedSongs = sorted;
                 this.sortState = 1;
             } else if (this.sortState == 1) {
-                this.songs.sort((b, a) => {
+                sorted.sort((b, a) => {
                     let fa = a.name.toLowerCase(), fb = b.name.toLowerCase(); 
                     if (value == 2) {
                         fa = a.duration_ms, fb = b.duration_ms; 
@@ -129,9 +142,14 @@ export default {
                     }
                     return 0
                 })
+                this.changedSongs = sorted;
                 this.sortState = 2;
             } else if (this.sortState == 2) {
-                this.songs = songData;
+                if (this.show_favorites) {
+                    this.changedSongs = auth.getFavoriteSongs();
+                } else {
+                    this.changedSongs = songData;
+                }
                 this.sort_by_duration = false;
                 this.sort_by_title = false;
                 this.sortState = 0;
@@ -147,6 +165,7 @@ export default {
             return list;
         },
         selectSong(song) {  
+            player.setPlaylist(this.changedSongs)
             player.setNowPlaying(song);
         },
         isFavorite(songID){
@@ -156,10 +175,27 @@ export default {
                 return false;
             }
         },  
+        isPlaying(song) {
+            return player.getNowPlaying() == song;
+        },
         getTime(millis) {
             var minutes = Math.floor(millis / 60000);
             var seconds = ((millis % 60000) / 1000).toFixed(0);
             return seconds == 60 ? (minutes+1) + ":00" : minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+        },
+        findFromKeyword(songs) {
+            if (this.keyword != '') {
+                let result = [];
+                    for ( let i = 0; i < songs.length; i++) {
+                        if (songs[i].name.toLowerCase().includes(this.keyword.toLowerCase())) {
+                            result.push(songs[i])
+                        }
+                    }
+                return result;
+            } else {
+                return songs
+            }
+            
         }
     }
 }

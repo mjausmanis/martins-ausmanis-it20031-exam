@@ -7,7 +7,7 @@
         <div class="wrapper-profile">
             <div class="section-user">
                 <span class="avatar"></span>
-                <h3 id="txt-full-name">NAME SURNAME</h3>
+                <h3 id="txt-full-name">{{fullName}}</h3>
             </div>
             <button id="btn-logout" v-on:click="logOut()">LOGOUT</button>
         </div>
@@ -17,6 +17,22 @@
 <script>
     import { auth } from '../stores/auth.js'
     export default {
+        data() {
+            return {
+                name: auth.user.name,
+                surname: auth.user.surname
+            }
+        },
+        computed:{
+            fullName: {
+                get() {
+                    return auth.user.name + ' ' + auth.user.surname
+                },
+                set(newValue) {
+                    [this.name, this.surname] = newValue.split(' ')
+                }
+            }
+        },
         methods: {
             logOut() {
                 auth.logout()

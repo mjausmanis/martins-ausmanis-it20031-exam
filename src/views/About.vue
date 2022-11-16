@@ -10,31 +10,31 @@
     <form>
         <div class="wrapper-input">
             <label>NAME</label>
-            <input v-show="editingForm" id="input-name" :placeholder="name"/>
+            <input v-show="editingForm" id="input-name" :placeholder="name" v-model="nameInput" :key="name" v-text="name"/>
             <p id="txt-name" v-show="!editingForm">{{name}}</p>
         </div>
         <div class="wrapper-input">
             <label>SURNAME</label>
-            <input v-show="editingForm" id="input-surname" :placeholder="surname"/>
+            <input v-show="editingForm" id="input-surname" :placeholder="surname" v-model="surnameInput" v-text="surname"/>
             <p id="txt-surname" v-show="!editingForm">{{surname}}</p>
         </div>
         <div class="wrapper-input">
             <label>STUDENT CODE</label>
-            <input v-show="editingForm" id="input-code" :placeholder="code"/>
+            <input v-show="editingForm" id="input-code" :placeholder="code" v-model="codeInput" v-text="code"/>
             <p id="txt-code" v-show="!editingForm">{{code}}</p>
         </div>
         <div class="wrapper-songs">
             <label>FAVORITE SONGS</label>
-            <ul>
-                <li>
-                    <img id="img-album" src="https://i.scdn.co/image/ab67616d00001e02980c9d288a180838cd12ad24" />
+            <ul v-if="favoriteList.length > 0">
+                <li v-for="song in favoriteList" :key="song">
+                    <img id="img-album" :src="song.album.images[0].url" />
                     <div class="song-info">
-                        <p id="txt-song" class="song-name">DEEP (feat. Nonô)</p>
-                        <p id="txt-artist" class="song-artists">Example</p>
+                        <p id="txt-song" class="song-name">{{song.name}}</p>
+                        <p id="txt-artist" class="song-artists">{{getArtists(song.artists)}}</p>
                     </div>
                 </li>
             </ul>
-            <div id="txt-empty" class="empty">NO SONGS FOUND</div>
+            <div id="txt-empty" class="empty" v-if="favoriteList.length == 0">NO SONGS FOUND</div>
         </div>
     </form>
 </div>
@@ -46,9 +46,31 @@ export default {
     data() {
         return {
             editingForm: false,
-            name: auth.name,
-            surname : auth.surname,
-            code: auth.code
+            nameInput: '',
+            surnameInput: '',
+            codeInput: ''
+        }
+    },
+    computed: {
+        name: {
+            get() {
+                return auth.user.name;
+            }
+        },
+        surname: {
+            get() {
+                return auth.user.surname;
+            }
+        },
+        code: {
+            get() {
+                return auth.user.code;
+            }
+        },
+        favoriteList: {
+            get(){
+                return auth.getFavoriteSongs()
+            }
         }
     },
     methods:{
@@ -66,8 +88,26 @@ export default {
             } else return "Edit form"
         },
         saveInput() {
-
-        }
+            let finName = this.nameInput, finSur = this.surnameInput, finCode = this.codeInput;
+            if(this.nameInput == '') {
+                finName = auth.user.name;
+            }
+            if(this.surnameInput == '') {
+                finSur = auth.user.surname;
+            }
+            if(this.codeInput == '') {
+                finCode = auth.user.code;
+            }
+            auth.setUserData(finName, finSur, finCode);
+        },
+        getArtists(artists) {
+            var list = '';
+            artists.forEach(element => {
+                list = list.concat(element.name).concat(", ")
+            })
+            list = list.slice(0, -2)
+            return list;
+        },
     }
 }
 </script>

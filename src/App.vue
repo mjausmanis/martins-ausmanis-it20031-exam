@@ -10,20 +10,14 @@
 </template>
 
 <script>
-import { auth } from './stores/auth.js'
 export default {
     data() {
         let conversion = false;
         if(localStorage.is_authenticated == 'true') {
             conversion = true;
-            console.log(conversion)
         }
         return {
             authCheck : conversion
-        }
-    },  
-    methods: {
-        check() {
         }
     }
 }
