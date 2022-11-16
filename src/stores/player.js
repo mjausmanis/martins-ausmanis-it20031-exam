@@ -36,14 +36,8 @@ export const player = reactive({
         return this.playlist[pos+1]
     },
     getPreviousSong() {
-        if (this.playlist.indexOf(this.now_playing) >= 0) {
-            if (this.playlist.indexOf(this.now_playing) != 0){ 
-                let pos = this.playlist.indexOf(this.now_playing);
-                return this.playlist[pos-1];
-            }
-        } else {
-            return this.playlist[0];
-        }
+        let pos = this.playlist.indexOf(this.now_playing);
+        return this.playlist[pos-1]
     },
     resetNowPlaying() {
         this.now_playing = {};

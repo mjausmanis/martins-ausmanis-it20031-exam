@@ -8,9 +8,6 @@ import App from './App.vue'
 import Header from './components/HeaderComponent.vue'
 import AudioPlayer from './components/AudioPlayerComponent.vue'
 import Navigation from './components/NavigationComponent.vue'
-import IconPlay from './components/icons/IconPlay.vue'
-import IconCaretUp from './components/icons/IconCaretUp.vue'
-import IconHeart from './components/icons/IconHeart.vue'
 
 
 

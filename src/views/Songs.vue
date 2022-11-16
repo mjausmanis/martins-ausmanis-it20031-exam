@@ -25,7 +25,7 @@
                 </th>
             </tr>
             <!-- Loop goes on this <tr> element -->
-            <tr class="song" v-for="(song, index) in songs" :key="index" v-on:dblclick="selectSong(song)" :class="[{active : isPlaying(song)}]">
+            <tr class="song" v-for="(song, index) in songs" :key="index" v-on:dblclick="selectSong(song)" :class="{active : isPlaying(song)}">
                 <td id="td-index">
                     <IconPlay v-show="isPlaying(song)"/>
                     <span id="txt-index" v-text="index+1" v-if="isPlaying(song) == false"></span>
@@ -38,7 +38,7 @@
                 <td id="td-album">{{song.album.name}}</td>
                 <td id="td-duration">
                     {{getTime(song.duration_ms)}}
-                    <IconHeart v-on:click="toggleFavorite(song.id), $forceUpdate()" v-bind:class="[{ active : isFavorite(song.id)}]" :key="index"/>
+                    <IconHeart v-on:click="toggleFavorite(song.id), $forceUpdate()" v-bind:class="{ active : isFavorite(song.id)}" :key="index"/>
                 </td>
             </tr>
         </table>
@@ -96,14 +96,21 @@ export default {
                 this.changedSongs = songData;
             }
         },
+
+        //weird sorts
         sortBy(value){
+            //jauns masīvs priekš kopijas, lai oriģinālo nesortotu
             let sorted;
+            //Ja ir tikai favorites, sorto tikai tos.
             if (this.show_favorites) {
+                //Piešķir sorted favorites kopiju
                 sorted = auth.getFavoriteSongs().concat();
             } else {
                 sorted = songData.concat();
             }
+            //Izfiltrē sorted, lai tur būtu tikai tās dziesmas, kas sakrīt ar search
             sorted = this.findFromKeyword(sorted);
+            //value - 1: sorto title, value - 2 : sorto duration;
             if ( value == 1) {
                 this.sort_by_duration = false;
                 this.sort_by_title = true;
@@ -112,11 +119,14 @@ export default {
                 this.sort_by_duration = true;
             }
 
+            //sortState-0: unsorted; sortState-1:a-z/ascending; sortState-2:z-a/descending
+            //bet ja ir ticis nospiests, tad pārveido uz nākamo, so jāčeko priekš iepriekšējā
             if (this.sortState == 0) {
                 sorted.sort((a, b) => {
                     let fa = a.name.toLowerCase(), fb = b.name.toLowerCase(); 
+                    // ja sorting duration, tad nomaina fa, fb vērtības;
                     if (value == 2) {
-                        fa = a.name, fb = b.name; 
+                        fa = a.duration_ms, fb = b.duration_ms; 
                     }
                     if (fa < fb) {
                         return -1
@@ -126,7 +136,9 @@ export default {
                     }
                     return 0
                 })
+                //piešķir mainīgajam
                 this.changedSongs = sorted;
+                //nomaina state uz to kāds ir
                 this.sortState = 1;
             } else if (this.sortState == 1) {
                 sorted.sort((b, a) => {
@@ -145,6 +157,8 @@ export default {
                 this.changedSongs = sorted;
                 this.sortState = 2;
             } else if (this.sortState == 2) {
+                //unsorted
+                //attiestata changedSongs
                 if (this.show_favorites) {
                     this.changedSongs = auth.getFavoriteSongs();
                 } else {
@@ -165,7 +179,7 @@ export default {
             return list;
         },
         selectSong(song) {  
-            player.setPlaylist(this.changedSongs)
+            player.setPlaylist(this.songs)
             player.setNowPlaying(song);
         },
         isFavorite(songID){
@@ -176,7 +190,7 @@ export default {
             }
         },  
         isPlaying(song) {
-            return player.getNowPlaying() == song;
+            return player.getNowPlaying().id == song.id;
         },
         getTime(millis) {
             var minutes = Math.floor(millis / 60000);
