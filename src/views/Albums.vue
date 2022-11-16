@@ -3,12 +3,12 @@
     <div class="wrapper-header">
         <h1>ALBUMS</h1>
         <div class="settings">
-            <button id="btn-grid" v-bind:class="[{ active : view == 1}]" v-on:click="setView(1)"><IconGrid /></button>
-            <button id="btn-list" v-bind:class="[{ active : view == 2}]" v-on:click="setView(2)"><IconList /></button>
+            <button id="btn-grid" v-bind:class="{ active : view == 1}" v-on:click="setView(1)"><IconGrid /></button>
+            <button id="btn-list" v-bind:class="{ active : view == 2}" v-on:click="setView(2)"><IconList /></button>
         </div>
     </div>
-    <ul id="list-albums" v-bind:class="[{ grid : view == 1}]">
-        <li v-for="album in albums" class="album" :key="album" v-on:dblclick="selectAlbum(album)" v-bind:class="[{ active : checkIfPlaying(album.id) }]">
+    <ul id="list-albums" v-bind:class="{ grid : view == 1}">
+        <li v-for="album in albums" class="album" :key="album" v-on:dblclick="selectAlbum(album)" v-bind:class="{ active : checkIfPlaying(album.id) }">
             <img id="img-album" :src="album.images[1].url"/>
             <div class="album-info">
                 <h4 id="txt-album-name">{{album.name}}</h4>

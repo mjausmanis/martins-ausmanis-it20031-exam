@@ -3,7 +3,7 @@
     <div class="wrapper-header">
         <h1>ABOUT ME</h1>
         <div class="settings">
-            <button id="btn-edit" v-bind:class="[{ active : editingForm }]" v-on:click="toggleEdit()" v-text="btnText()"></button>
+            <button id="btn-edit" v-bind:class="{ active : editingForm }" v-on:click="toggleEdit()" v-text="btnText()"></button>
             <button id="btn-save" v-show="editingForm" v-on:click="toggleEdit(), saveInput()">Save Form</button>
         </div>
     </div>

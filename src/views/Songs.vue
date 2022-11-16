@@ -6,20 +6,20 @@
             <input v-model="keyword" id="input-search" placeholder="Search by title..."/>
         </div>
         <div class="wrapper-settings">
-            <button v-bind:class="[{ active: show_favorites }]" id="btn-show-favorites" v-on:click="showFavorites()">Show Favorites</button>
+            <button v-bind:class="{ active: show_favorites }" id="btn-show-favorites" v-on:click="showFavorites()">Show Favorites</button>
         </div>
     </div>
     <div class="wrapper-songs">
         <table cellspacing="0" cellpadding="0">
             <tr ref="header">
                 <th id="th-id" >#</th>
-                <th v-bind:class="[{ active: sort_by_title }]" id="th-title" v-on:click="sortBy(1)">
+                <th v-bind:class="{ active: sort_by_title }" id="th-title" v-on:click="sortBy(1)">
                     Title
                     <IconCaretUp v-if="sort_by_title == true" v-bind:class="{ 'flip-vertical': sortState === 2 }" />
                 </th>
                 <th id="th-artist">Artist</th>
                 <th id="th-album">Album</th>
-                <th v-bind:class="[{ active: sort_by_duration}]" id="th-duration" v-on:click="sortBy(2)">
+                <th v-bind:class="{ active: sort_by_duration}" id="th-duration" v-on:click="sortBy(2)">
                     Duration
                     <IconCaretUp v-if="sort_by_duration == true" v-bind:class="{ 'flip-vertical': sortState === 2 }"/>
                 </th>
