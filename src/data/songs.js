@@ -117,7 +117,7 @@ export default [
         ],
         "duration_ms": 187400,
         "id": "0X6v1ycFAe1ji9lRMJGCy5",
-        "name": "DEEP (feat. Nonô)",
+        "name": "DEEP (feat. Nonô)", 
         "preview_url": "https://p.scdn.co/mp3-preview/d71ea1ca6965b8a97b3b076fc658973048091a97?cid=f6a40776580943a7bc5173125a1e8832"
     },
     {
